@@ -28,27 +28,26 @@ Google Form  ->  Respuestas (Google Sheets)  ->  CSV  ->  generar_qr.py  ->  1 P
 
 ## 1) Cómo armar el Google Form
 
-Crea **un formulario por taller** (así no se mezclan los datos). Usa exactamente
-estos títulos de pregunta — el script los reconoce automáticamente (no importan
-mayúsculas ni acentos):
+Un **solo formulario** basta. La persona solo llena sus datos y **elige su
+empresa** de una lista; la dirección y la web/Instagram NO se preguntan: se
+completan solas al generar el QR, según la empresa (ver paso 2).
 
-| Pregunta (título)   | Tipo            | Obligatoria |
-|---------------------|-----------------|-------------|
-| Nombre completo     | Respuesta corta | Sí          |
-| Cargo               | Respuesta corta | Sí          |
-| Empresa             | Respuesta corta | Sí          |
-| Teléfono            | Respuesta corta | Sí          |
-| Correo              | Respuesta corta | Sí          |
-| Dirección           | Respuesta corta | No          |
-| Página web          | Respuesta corta | No          |
+Usa exactamente estos títulos de pregunta — el script los reconoce
+automáticamente (no importan mayúsculas ni acentos):
 
-- **Taller / empresa A:** usa el título **`Página web`**.
-- **Taller / empresa B:** si en vez de web tienen otra página, ponla como
-  **`Página de lista`** (también la reconoce y la mete como URL del contacto).
-- Si además del celular quieres un segundo número, agrega **`Teléfono fijo`**.
+| Pregunta (título)   | Tipo                        | Obligatoria |
+|---------------------|-----------------------------|-------------|
+| Nombre completo     | Respuesta corta             | Sí          |
+| Cargo               | Respuesta corta             | Sí          |
+| Teléfono            | Respuesta corta             | Sí          |
+| Correo              | Respuesta corta             | Sí          |
+| Empresa             | **Desplegable** (2 opciones)| Sí          |
 
-Consejo: en Empresa, si todos son de la misma, puedes fijarla como valor por
-defecto o simplemente pedir que la escriban.
+En **Empresa**, agrega como opciones los nombres de las dos empresas. Deben
+escribirse **igual** que las claves del archivo `empresas.json` (paso 2).
+
+> Si prefieres, puedes hacer un formulario por taller; da lo mismo, porque la
+> empresa igual se selecciona/identifica y el resto es automático.
 
 ### Obtener el CSV
 En el formulario: pestaña **Respuestas** → ícono verde de Sheets → en la hoja,
@@ -56,13 +55,36 @@ En el formulario: pestaña **Respuestas** → ícono verde de Sheets → en la h
 
 ---
 
-## 2) Instalar (una sola vez)
+## 2) Configurar las empresas (una sola vez)
+
+Edita **`empresas.json`** con los datos reales de cada empresa. La clave debe
+coincidir **exactamente** con la opción de la lista "Empresa" del formulario.
+Cada empresa lleva `direccion` y **una** de estas: `web` **o** `instagram`.
+
+```json
+{
+  "Empresa A": {
+    "direccion": "Av. Real 1234, Of. 56, Santiago",
+    "web": "www.empresa-a.cl"
+  },
+  "Empresa B": {
+    "direccion": "Calle Real 4321, Local 7, Santiago",
+    "instagram": "@empresa_b"
+  }
+}
+```
+
+Así, la dirección y la web/Instagram quedan fijas por empresa: la persona nunca
+las escribe y no hay errores de tipeo. Instagram acepta `@usuario`, `usuario` o
+el link completo.
+
+## 3) Instalar (una sola vez)
 
 ```bash
 pip install -r requirements.txt
 ```
 
-## 3) Generar los QR
+## 4) Generar los QR
 
 ```bash
 # Básico: lee el CSV y crea un PNG por persona en ./qr_salida
@@ -72,12 +94,19 @@ python generar_qr.py respuestas.csv
 python generar_qr.py respuestas_tallerA.csv --salida qr_taller_A
 python generar_qr.py respuestas_tallerB.csv --salida qr_taller_B
 
+# Usar otro archivo de empresas (por defecto usa empresas.json)
+python generar_qr.py respuestas.csv --empresas empresas.json
+
 # Generar también SVG vectorial (ideal para imprimir a cualquier tamaño)
 python generar_qr.py respuestas.csv --svg
 
 # Guardar además el .vcf de cada uno (para revisar el contenido)
 python generar_qr.py respuestas.csv --guardar-vcf
 ```
+
+El script muestra qué empresa detectó por cada persona. Si alguien seleccionó
+una empresa que **no** está en `empresas.json`, lo avisa con `⚠` y usa lo que
+venga en el CSV (o lo deja en blanco).
 
 Cada archivo se nombra con el nombre de la persona, p. ej. `ana_perez_soto.png`.
 

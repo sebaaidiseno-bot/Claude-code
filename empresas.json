@@ -1,0 +1,13 @@
+{
+  "_ayuda": "Edita este archivo con los datos reales. La clave (texto antes de los dos puntos) debe coincidir EXACTAMENTE con la opción que pusiste en la lista desplegable 'Empresa' del Google Form. Cada empresa lleva 'direccion' y UNA de estas: 'web' o 'instagram'. Borra la línea _ayuda si quieres.",
+
+  "Empresa A": {
+    "direccion": "Av. Ejemplo 1234, Oficina 56, Santiago",
+    "web": "www.empresa-a.cl"
+  },
+
+  "Empresa B": {
+    "direccion": "Calle Ejemplo 4321, Local 7, Santiago",
+    "instagram": "@empresa_b"
+  }
+}

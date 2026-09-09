@@ -1,3 +1,3 @@
-Marca temporal,Nombre completo,Cargo,Empresa,Teléfono,Correo,Dirección,Página web
-2026/09/09 10:15:00,Ana Pérez Soto,Gerenta Comercial,Antumalal SpA,+56 9 1234 5678,ana.perez@antumalal.cl,Av. Providencia 1234 Of. 56 Santiago,www.antumalal.cl
-2026/09/09 10:18:00,Carlos Rojas,Jefe de Operaciones,Antumalal SpA,987654321,carlos.rojas@antumalal.cl,Av. Providencia 1234 Of. 56 Santiago,www.antumalal.cl
+Marca temporal,Nombre completo,Cargo,Teléfono,Correo,Empresa
+2026/09/09 10:15:00,Ana Pérez Soto,Gerenta Comercial,+56 9 1234 5678,ana.perez@empresa-a.cl,Empresa A
+2026/09/09 10:18:00,Carlos Rojas,Jefe de Operaciones,987654321,carlos.rojas@empresa-b.cl,Empresa B

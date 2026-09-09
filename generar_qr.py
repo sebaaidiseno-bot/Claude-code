@@ -23,6 +23,7 @@ from __future__ import annotations
 
 import argparse
 import csv
+import json
 import re
 import sys
 import unicodedata
@@ -90,6 +91,34 @@ def construir_mapa(headers: list[str]) -> dict[str, str]:
 
 
 # ---------------------------------------------------------------------------
+# Configuración de empresas (dirección + web/Instagram fijos por empresa)
+# ---------------------------------------------------------------------------
+
+def cargar_empresas(ruta: Path | None) -> dict[str, dict]:
+    """Devuelve {nombre_normalizado: {nombre, direccion, url}}."""
+    if ruta is None or not ruta.exists():
+        return {}
+    with ruta.open(encoding="utf-8") as f:
+        crudo = json.load(f)
+
+    empresas: dict[str, dict] = {}
+    for clave, datos in crudo.items():
+        if clave.startswith("_") or not isinstance(datos, dict):
+            continue  # entradas de ayuda / comentarios
+        url = ""
+        if datos.get("web"):
+            url = normalizar_url(datos["web"])
+        elif datos.get("instagram"):
+            url = instagram_a_url(datos["instagram"])
+        empresas[normalizar(clave)] = {
+            "nombre": clave,
+            "direccion": (datos.get("direccion") or "").strip(),
+            "url": url,
+        }
+    return empresas
+
+
+# ---------------------------------------------------------------------------
 # Construcción de la vCard
 # ---------------------------------------------------------------------------
 
@@ -119,6 +148,17 @@ def normalizar_url(url: str) -> str:
     if url and not re.match(r"^https?://", url, re.I):
         url = "https://" + url
     return url
+
+
+def instagram_a_url(valor: str) -> str:
+    """'@handle' o 'handle' o un link -> https://www.instagram.com/handle"""
+    valor = valor.strip()
+    if not valor:
+        return ""
+    if "instagram.com" in valor.lower():
+        return normalizar_url(valor)
+    handle = valor.lstrip("@").strip("/")
+    return f"https://www.instagram.com/{handle}"
 
 
 def normalizar_tel(tel: str) -> str:
@@ -217,6 +257,10 @@ def main() -> int:
         help="Carpeta donde guardar los QR (por defecto: qr_salida).",
     )
     parser.add_argument(
+        "-e", "--empresas", default="empresas.json",
+        help="JSON con dirección y web/Instagram por empresa (por defecto: empresas.json).",
+    )
+    parser.add_argument(
         "--svg", action="store_true",
         help="Generar también un SVG vectorial (además del PNG).",
     )
@@ -233,6 +277,11 @@ def main() -> int:
 
     salida = Path(args.salida)
     salida.mkdir(parents=True, exist_ok=True)
+
+    empresas = cargar_empresas(Path(args.empresas))
+    if empresas:
+        print("Empresas configuradas:", ", ".join(e["nombre"] for e in empresas.values()))
+        print()
 
     with ruta_csv.open(newline="", encoding="utf-8-sig") as f:
         lector = csv.DictReader(f)
@@ -264,6 +313,19 @@ def main() -> int:
                 print(f"  (fila {i}: sin nombre, se omite)")
                 continue
 
+            # Completar dirección y web/Instagram desde la config de la empresa.
+            nota = ""
+            clave_emp = normalizar(datos.get("empresa", ""))
+            if clave_emp and clave_emp in empresas:
+                cfg = empresas[clave_emp]
+                datos["empresa"] = cfg["nombre"]  # nombre "oficial" y consistente
+                if cfg["direccion"]:
+                    datos["direccion"] = cfg["direccion"]
+                if cfg["url"]:
+                    datos["url"] = cfg["url"]
+            elif clave_emp and empresas:
+                nota = "  ⚠ empresa no está en empresas.json (uso los datos del CSV si hay)"
+
             vcard = crear_vcard(datos)
 
             base = nombre_archivo(datos["nombre"], f"contacto_{i}")
@@ -282,7 +344,7 @@ def main() -> int:
                 (salida / f"{base}.vcf").write_text(vcard, encoding="utf-8")
                 extra += " +vcf"
 
-            print(f"  ✔ {datos['nombre']:<30s} -> {png.name}{extra}")
+            print(f"  ✔ {datos['nombre']:<30s} -> {png.name}{extra}{nota}")
             generados += 1
 
     print(f"\nListo: {generados} código(s) QR en '{salida}/'")
