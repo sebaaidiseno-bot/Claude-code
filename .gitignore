@@ -1,0 +1,14 @@
+# Salidas generadas
+qr_salida/
+qr_taller_*/
+qr_ejemplo/
+*.vcf
+
+# Respuestas reales (datos de personas) — no versionar
+respuestas*.csv
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
