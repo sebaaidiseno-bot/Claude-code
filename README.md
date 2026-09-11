@@ -43,11 +43,21 @@ automáticamente (no importan mayúsculas ni acentos):
 | Correo              | Respuesta corta             | Sí          |
 | Empresa             | **Desplegable** (2 opciones)| Sí          |
 
-En **Empresa**, agrega como opciones los nombres de las dos empresas. Deben
-escribirse **igual** que las claves del archivo `empresas.json` (paso 2).
+En **Empresa**, agrega como opciones las sucursales. Deben escribirse **igual**
+que las claves del archivo `empresas.json`:
 
-> Si prefieres, puedes hacer un formulario por taller; da lo mismo, porque la
-> empresa igual se selecciona/identifica y el resto es automático.
+- Taller Antumalal (Carrera 532, Chillán)
+- Taller Antumalal (Carrera 515, Chillán)
+- Antumalal Autopartes Chillán
+- Antumalal Autopartes Concepción
+- Antumalal Autopartes Curicó
+- Antumalal Autopartes Puerto Montt
+- Antumalal Autopartes Temuco
+- Presto Car Service (Concepción)
+
+Cada sucursal ya trae su dirección y su web/Instagram en `empresas.json`
+(Taller Antumalal → agenda.grupoantumalal.cl, Antumalal Autopartes →
+antumalal.net, Presto Car Service → Instagram @prestocarservice).
 
 ### Obtener el CSV
 En el formulario: pestaña **Respuestas** → ícono verde de Sheets → en la hoja,

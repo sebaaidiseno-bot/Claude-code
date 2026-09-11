@@ -111,7 +111,7 @@ def cargar_empresas(ruta: Path | None) -> dict[str, dict]:
         elif datos.get("instagram"):
             url = instagram_a_url(datos["instagram"])
         empresas[normalizar(clave)] = {
-            "nombre": clave,
+            "nombre": (datos.get("empresa") or clave).strip(),
             "direccion": (datos.get("direccion") or "").strip(),
             "url": url,
         }
