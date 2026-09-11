@@ -1,149 +1,145 @@
-# Generador de QR de contacto (vCard) para credenciales
+# Credenciales con QR de contacto (vCard)
 
-Genera un código QR por persona que, al escanearse, ofrece **"Agregar contacto"**
-con nombre, cargo, empresa, teléfono, correo, dirección y página web. Sirve para
-armar credenciales de los dos talleres.
+Genera **credenciales listas para imprimir** para las personas de los talleres.
+Cada credencial lleva la foto, los datos y un **QR de contacto (vCard)** que, al
+escanearse, ofrece **"Agregar contacto"** con nombre, cargo, empresa, teléfono,
+correo y web/Instagram.
 
-El tipo de QR que buscas se llama **vCard** (a veces "QR de contacto" o "MECARD").
-Este proyecto usa vCard 3.0, que es el más compatible con iPhone y Android.
+Hay dos herramientas:
+
+1. **`generar_qr.py`** — solo los códigos QR (PNG/SVG), por si quieres montarlos tú.
+2. **`generar_credenciales.py`** — la credencial completa **superpuesta sobre tu
+   plantilla** de Illustrator/Photoshop (foto + datos + QR).
 
 ---
 
 ## Flujo completo
 
 ```
-Google Form  ->  Respuestas (Google Sheets)  ->  CSV  ->  generar_qr.py  ->  1 PNG por persona
+Google Form  ->  Respuestas (Sheets)  ->  CSV
+Fotos subidas en el Form  ->  las editas  ->  carpeta ./fotos
+Tu plantilla (Illustrator/PS)  ->  exportas a PNG  ->  carpeta ./plantillas
+                         |
+                         v
+             python generar_credenciales.py respuestas.csv
+                         |
+                         v
+              ./credenciales  (un PNG por persona + PDF opcional)
 ```
 
-1. Cada persona llena un **Google Form** (uno por taller).
-2. Las respuestas caen solas en una **Google Sheet**.
-3. Descargas la hoja como **CSV**.
-4. Corres el script y obtienes un **PNG** (y opcional SVG) por persona.
-5. Pegas cada QR en su credencial (Canva, Illustrator, Word, lo que uses).
-
-> No necesitas Cloud Functions ni automatización compleja: un CSV + este script
-> resuelve todo en segundos y lo puedes repetir cada vez que lleguen respuestas.
-
 ---
 
-## 1) Cómo armar el Google Form
+## 1) Google Form
 
-Un **solo formulario** basta. La persona solo llena sus datos y **elige su
-empresa** de una lista; la dirección y la web/Instagram NO se preguntan: se
-completan solas al generar el QR, según la empresa (ver paso 2).
+Un solo formulario. La persona llena sus datos, **elige su empresa** de una lista
+y **sube su foto**. Usa exactamente estos títulos (no importan mayúsculas/acentos):
 
-Usa exactamente estos títulos de pregunta — el script los reconoce
-automáticamente (no importan mayúsculas ni acentos):
+| Pregunta (título) | Tipo                          | Obligatoria |
+|-------------------|-------------------------------|-------------|
+| Nombre completo   | Respuesta corta               | Sí          |
+| Cargo             | Respuesta corta               | Sí          |
+| Teléfono          | Respuesta corta               | Sí          |
+| Correo            | Respuesta corta               | Sí          |
+| Empresa           | **Desplegable** (3 opciones)  | Sí          |
+| Fotografía        | **Subir archivo** (1 imagen)  | Sí          |
 
-| Pregunta (título)   | Tipo                        | Obligatoria |
-|---------------------|-----------------------------|-------------|
-| Nombre completo     | Respuesta corta             | Sí          |
-| Cargo               | Respuesta corta             | Sí          |
-| Teléfono            | Respuesta corta             | Sí          |
-| Correo              | Respuesta corta             | Sí          |
-| Empresa             | **Desplegable** (2 opciones)| Sí          |
+Opciones de **Empresa** (escríbelas igual que en `empresas.json`):
+`Taller Antumalal`, `Antumalal Autopartes`, `Presto Car Service`.
 
-En **Empresa**, agrega como opciones las sucursales. Deben escribirse **igual**
-que las claves del archivo `empresas.json`:
+- **Subir archivo** obliga a la persona a iniciar sesión con cuenta Google; las
+  fotos caen en una carpeta de tu Drive y en el CSV queda el **link** a cada una.
+- La foto **no** va dentro del QR (lo haría ilegible): va en el diseño.
+- Pide "foto de frente, fondo claro".
 
-- Taller Antumalal (Carrera 532, Chillán)
-- Taller Antumalal (Carrera 515, Chillán)
-- Antumalal Autopartes Chillán
-- Antumalal Autopartes Concepción
-- Antumalal Autopartes Curicó
-- Antumalal Autopartes Puerto Montt
-- Antumalal Autopartes Temuco
-- Presto Car Service (Concepción)
+**CSV:** en Respuestas → ícono de Sheets → *Archivo → Descargar → CSV*.
 
-Cada sucursal ya trae su dirección y su web/Instagram en `empresas.json`
-(Taller Antumalal → agenda.grupoantumalal.cl, Antumalal Autopartes →
-antumalal.net, Presto Car Service → Instagram @prestocarservice).
+## 2) Empresas (`empresas.json`)
 
-### Obtener el CSV
-En el formulario: pestaña **Respuestas** → ícono verde de Sheets → en la hoja,
-**Archivo → Descargar → Valores separados por comas (.csv)**.
-
----
-
-## 2) Configurar las empresas (una sola vez)
-
-Edita **`empresas.json`** con los datos reales de cada empresa. La clave debe
-coincidir **exactamente** con la opción de la lista "Empresa" del formulario.
-Cada empresa lleva `direccion` y **una** de estas: `web` **o** `instagram`.
+Datos fijos por marca (la persona no los escribe). Cada marca lleva su web o
+Instagram; la **dirección está vacía** — complétala con la dirección oficial
+cuando la confirmes (si queda vacía, el QR no incluye dirección).
 
 ```json
 {
-  "Empresa A": {
-    "direccion": "Av. Real 1234, Of. 56, Santiago",
-    "web": "www.empresa-a.cl"
-  },
-  "Empresa B": {
-    "direccion": "Calle Real 4321, Local 7, Santiago",
-    "instagram": "@empresa_b"
-  }
+  "Taller Antumalal":     { "direccion": "", "web": "agenda.grupoantumalal.cl" },
+  "Antumalal Autopartes": { "direccion": "", "web": "antumalal.net" },
+  "Presto Car Service":   { "direccion": "", "instagram": "@prestocarservice" }
 }
 ```
 
-Así, la dirección y la web/Instagram quedan fijas por empresa: la persona nunca
-las escribe y no hay errores de tipeo. Instagram acepta `@usuario`, `usuario` o
-el link completo.
-
-## 3) Instalar (una sola vez)
+## 3) Instalar (una vez)
 
 ```bash
 pip install -r requirements.txt
 ```
 
-## 4) Generar los QR
+## 4) Tu plantilla (`plantillas/`)
 
-```bash
-# Básico: lee el CSV y crea un PNG por persona en ./qr_salida
-python generar_qr.py respuestas.csv
+Exporta tu diseño **por marca** a PNG a tamaño final (ideal 10×15 cm a 300 DPI =
+1181×1772 px), dejando el espacio vacío donde irán foto, textos y QR. Nómbralas:
 
-# Elegir carpeta de salida (útil para separar los dos talleres)
-python generar_qr.py respuestas_tallerA.csv --salida qr_taller_A
-python generar_qr.py respuestas_tallerB.csv --salida qr_taller_B
-
-# Usar otro archivo de empresas (por defecto usa empresas.json)
-python generar_qr.py respuestas.csv --empresas empresas.json
-
-# Generar también SVG vectorial (ideal para imprimir a cualquier tamaño)
-python generar_qr.py respuestas.csv --svg
-
-# Guardar además el .vcf de cada uno (para revisar el contenido)
-python generar_qr.py respuestas.csv --guardar-vcf
+```
+plantillas/taller_antumalal.png
+plantillas/antumalal_autopartes.png
+plantillas/presto_car_service.png
 ```
 
-El script muestra qué empresa detectó por cada persona. Si alguien seleccionó
-una empresa que **no** está en `empresas.json`, lo avisa con `⚠` y usa lo que
-venga en el CSV (o lo deja en blanco).
+¿Aún no tienes el diseño? Crea fondos de prueba para ver el layout:
 
-Cada archivo se nombra con el nombre de la persona, p. ej. `ana_perez_soto.png`.
+```bash
+python crear_plantilla_ejemplo.py
+```
+
+Las **posiciones** de foto, textos y QR se ajustan en `plantillas.json`. Las
+coordenadas van en fracción de 0 a 1 (x,y = centro del elemento), así calzan con
+cualquier resolución. Cambia los números hasta que encajen con tu arte.
+
+## 5) Fotos (`fotos/`)
+
+Guarda las fotos ya editadas nombradas por persona, en minúsculas y sin acentos:
+
+```
+Ana Pérez Soto  ->  fotos/ana_perez_soto.jpg
+```
+
+Si falta una foto, la credencial se genera igual con un recuadro de iniciales y
+el script te avisa a quién le falta.
+
+## 6) Generar
+
+```bash
+python generar_credenciales.py respuestas.csv            # PNG por persona
+python generar_credenciales.py respuestas.csv --pdf      # + un PDF con todas
+python generar_credenciales.py respuestas.csv -s salida_tallerA
+```
+
+Salen en `./credenciales`. El script muestra cada persona, avisa fotos faltantes
+y empresas sin plantilla.
 
 ---
 
-## Prueba rápida
+## Solo los QR (opcional)
 
-Ya viene un `datos_ejemplo.csv`. Para verlo funcionando:
+Si prefieres montar las credenciales tú, genera únicamente los QR:
 
 ```bash
-python generar_qr.py datos_ejemplo.csv --salida qr_ejemplo --svg
+python generar_qr.py respuestas.csv --salida qr --svg
 ```
 
-Escanea el PNG resultante con la cámara del teléfono: debe ofrecer agregar el
-contacto con todos los datos.
-
 ---
+
+## Prueba rápida (sin datos reales)
+
+```bash
+python crear_plantilla_ejemplo.py                        # fondos de prueba
+python generar_credenciales.py datos_ejemplo.csv --pdf   # 3 credenciales demo
+```
 
 ## Notas
 
-- **Teléfonos:** si escriben 9 dígitos partiendo en 9 (celular chileno), el
-  script agrega `+56` solo. Si ya viene con `+`, lo respeta. Recomienda a la
-  gente escribir el número con `+56 9 ...` para máxima compatibilidad.
-- **Nombre y apellido:** el QR muestra el nombre completo tal cual. Para el
-  ordenamiento interno separa nombre/apellidos con una heurística simple; si
-  necesitas control exacto, puedes agregar una columna `Apellidos` al formulario.
-- **PNG vs SVG:** para imprimir credenciales, el SVG escala sin perder nitidez;
-  el PNG sirve para pegar rápido en cualquier editor.
-- **Corrección de errores:** los QR usan nivel M (tolera algo de suciedad o un
-  logo pequeño al centro sin dejar de leerse).
+- **Teléfonos:** si vienen con 9 dígitos partiendo en 9 (celular chileno) se les
+  agrega `+56`. Si traen `+`, se respeta.
+- **Nombre en el archivo de foto:** se arma con minúsculas, sin acentos y guion
+  bajo. Si el script no encuentra una foto, imprime el nombre exacto que espera.
+- **Tamaño/print:** los PNG salen a 300 DPI; el PDF (`--pdf`) queda listo para
+  imprenta.

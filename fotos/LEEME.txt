@@ -1,0 +1,14 @@
+Pon aquí las fotos ya editadas de cada persona.
+
+Nombre del archivo = nombre de la persona en minúsculas, sin acentos y con
+guion bajo. Ejemplos:
+    Ana Pérez Soto   ->  ana_perez_soto.jpg
+    Carlos Rojas     ->  carlos_rojas.jpg
+
+Formatos aceptados: .jpg  .jpeg  .png  .webp
+
+Si a alguien le falta la foto, la credencial se genera igual con un recuadro
+gris con sus iniciales, y el script te avisa a quién le falta.
+
+Consejo: usa fotos de frente, fondo claro y más o menos cuadradas; el script
+las recorta al marco definido en plantillas.json.

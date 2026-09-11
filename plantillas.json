@@ -1,0 +1,44 @@
+{
+  "_ayuda": "Una entrada por MARCA (igual que en empresas.json). 'fondo' es tu plantilla exportada (PNG a tamaño final) en la carpeta plantillas/. Las coordenadas van en FRACCIÓN de 0 a 1: x,y es el CENTRO del elemento; para textos 'tam' es fracción del ALTO de la imagen; para 'qr' y foto 'tam/w/h' son fracción del ANCHO/ALTO. Ajusta estos valores hasta que calcen con tu diseño. Puedes borrar campos que no uses.",
+
+  "_fuentes": {
+    "regular": "",
+    "bold": ""
+  },
+
+  "Taller Antumalal": {
+    "fondo": "plantillas/taller_antumalal.png",
+    "foto": { "x": 0.5, "y": 0.32, "w": 0.44, "h": 0.44, "forma": "circulo" },
+    "textos": {
+      "nombre":   { "x": 0.5, "y": 0.60, "tam": 0.052, "color": "#FFFFFF", "align": "center", "bold": true, "max_w": 0.9 },
+      "cargo":    { "x": 0.5, "y": 0.66, "tam": 0.032, "color": "#E6E6E6", "align": "center" },
+      "telefono": { "x": 0.5, "y": 0.71, "tam": 0.028, "color": "#FFFFFF", "align": "center" },
+      "correo":   { "x": 0.5, "y": 0.745, "tam": 0.024, "color": "#E6E6E6", "align": "center" }
+    },
+    "qr": { "x": 0.5, "y": 0.88, "tam": 0.26, "fondo_blanco": true }
+  },
+
+  "Antumalal Autopartes": {
+    "fondo": "plantillas/antumalal_autopartes.png",
+    "foto": { "x": 0.5, "y": 0.32, "w": 0.44, "h": 0.44, "forma": "circulo" },
+    "textos": {
+      "nombre":   { "x": 0.5, "y": 0.60, "tam": 0.052, "color": "#FFFFFF", "align": "center", "bold": true, "max_w": 0.9 },
+      "cargo":    { "x": 0.5, "y": 0.66, "tam": 0.032, "color": "#F0D0D0", "align": "center" },
+      "telefono": { "x": 0.5, "y": 0.71, "tam": 0.028, "color": "#FFFFFF", "align": "center" },
+      "correo":   { "x": 0.5, "y": 0.745, "tam": 0.024, "color": "#F0D0D0", "align": "center" }
+    },
+    "qr": { "x": 0.5, "y": 0.88, "tam": 0.26, "fondo_blanco": true }
+  },
+
+  "Presto Car Service": {
+    "fondo": "plantillas/presto_car_service.png",
+    "foto": { "x": 0.5, "y": 0.32, "w": 0.44, "h": 0.44, "forma": "circulo" },
+    "textos": {
+      "nombre":   { "x": 0.5, "y": 0.60, "tam": 0.052, "color": "#FFFFFF", "align": "center", "bold": true, "max_w": 0.9 },
+      "cargo":    { "x": 0.5, "y": 0.66, "tam": 0.032, "color": "#CFCFCF", "align": "center" },
+      "telefono": { "x": 0.5, "y": 0.71, "tam": 0.028, "color": "#FFFFFF", "align": "center" },
+      "correo":   { "x": 0.5, "y": 0.745, "tam": 0.024, "color": "#CFCFCF", "align": "center" }
+    },
+    "qr": { "x": 0.5, "y": 0.88, "tam": 0.26, "fondo_blanco": true }
+  }
+}

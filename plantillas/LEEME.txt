@@ -1,0 +1,16 @@
+Pon aquí tu plantilla exportada por marca, en PNG a tamaño final (idealmente
+10x15 cm a 300 DPI = 1181x1772 px, vertical). Deja el ESPACIO vacío donde irán
+la foto, los textos y el QR; el script los superpone según plantillas.json.
+
+Nombres de archivo esperados (coinciden con plantillas.json):
+    taller_antumalal.png
+    antumalal_autopartes.png
+    presto_car_service.png
+
+Para probar sin tu diseño real, corre:  python crear_plantilla_ejemplo.py
+(eso crea fondos de EJEMPLO con estos mismos nombres; reemplázalos por los tuyos).
+
+Cómo exportar desde Illustrator/Photoshop:
+- Illustrator: Archivo > Exportar > Exportar como > PNG, 300 ppp.
+- Photoshop: Archivo > Exportar > Exportar como > PNG (o Guardar como).
+- Mantén el mismo tamaño para todas para que las posiciones calcen igual.

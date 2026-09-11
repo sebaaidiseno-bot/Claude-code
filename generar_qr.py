@@ -225,16 +225,22 @@ def nombre_archivo(texto: str, respaldo: str) -> str:
 # Generación de QR
 # ---------------------------------------------------------------------------
 
-def generar_qr_png(contenido: str, ruta: Path) -> None:
+def qr_pil(contenido: str, box_size: int = 10, border: int = 4):
+    """Devuelve el QR como imagen PIL (para guardar o componer en credenciales)."""
     qr = qrcode.QRCode(
         error_correction=qrcode.constants.ERROR_CORRECT_M,
-        box_size=10,
-        border=4,
+        box_size=box_size,
+        border=border,
     )
     qr.add_data(contenido)
     qr.make(fit=True)
     img = qr.make_image(fill_color="black", back_color="white")
-    img.save(ruta)
+    # qrcode devuelve un envoltorio; get_image() entrega el PIL.Image real.
+    return img.get_image() if hasattr(img, "get_image") else img
+
+
+def generar_qr_png(contenido: str, ruta: Path) -> None:
+    qr_pil(contenido).save(ruta)
 
 
 def generar_qr_svg(contenido: str, ruta: Path) -> None:

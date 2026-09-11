@@ -1,46 +1,18 @@
 {
-  "_ayuda": "Cada clave es una opción de la lista 'Empresa/Sucursal' del Google Form y debe escribirse IGUAL en el formulario. 'empresa' es el nombre que sale en el contacto (ORG); 'direccion' es la de esa sucursal; y va UNA de 'web' o 'instagram'. Borra la línea _ayuda si quieres.",
+  "_ayuda": "La clave debe coincidir EXACTAMENTE con la opción de la lista 'Empresa' del Google Form. Cada empresa lleva 'direccion' y UNA de estas: 'web' o 'instagram'. Las direcciones están vacías a propósito: complétalas con la dirección oficial de cada marca cuando la confirmes (si queda vacía, el QR simplemente no incluye dirección).",
 
-  "Taller Antumalal (Carrera 532, Chillán)": {
-    "empresa": "Taller Antumalal",
-    "direccion": "Carrera 532, 3800683 Chillán, Ñuble",
-    "web": "agenda.grupoantumalal.cl"
-  },
-  "Taller Antumalal (Carrera 515, Chillán)": {
-    "empresa": "Taller Antumalal",
-    "direccion": "Carrera 515, Chillán, Ñuble",
+  "Taller Antumalal": {
+    "direccion": "",
     "web": "agenda.grupoantumalal.cl"
   },
 
-  "Antumalal Autopartes Chillán": {
-    "empresa": "Antumalal Autopartes",
-    "direccion": "Avenida Brasil 238, Chillán, Ñuble",
-    "web": "antumalal.net"
-  },
-  "Antumalal Autopartes Concepción": {
-    "empresa": "Antumalal Autopartes",
-    "direccion": "Manuel Gutiérrez 1357, Concepción, Biobío",
-    "web": "antumalal.net"
-  },
-  "Antumalal Autopartes Curicó": {
-    "empresa": "Antumalal Autopartes",
-    "direccion": "Longitudinal Sur Km. 186, Curicó, Maule",
-    "web": "antumalal.net"
-  },
-  "Antumalal Autopartes Puerto Montt": {
-    "empresa": "Antumalal Autopartes",
-    "direccion": "Camino a La Vara Km. 4, Puerto Montt, Los Lagos",
-    "web": "antumalal.net"
-  },
-  "Antumalal Autopartes Temuco": {
-    "empresa": "Antumalal Autopartes",
-    "direccion": "Longitudinal Sur 2715, Temuco, Araucanía",
+  "Antumalal Autopartes": {
+    "direccion": "",
     "web": "antumalal.net"
   },
 
-  "Presto Car Service (Concepción)": {
-    "empresa": "Presto Car Service",
-    "direccion": "Paicaví 2132, 4050000 Concepción, Biobío",
+  "Presto Car Service": {
+    "direccion": "",
     "instagram": "@prestocarservice"
   }
 }

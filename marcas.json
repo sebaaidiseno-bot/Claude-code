@@ -1,0 +1,16 @@
+{
+  "_ayuda": "Estilo por MARCA (el campo 'empresa' de empresas.json). 'color' es el color principal (hex). 'logo' es un PNG con fondo transparente dentro de la carpeta logos/ (opcional: si no existe, se escribe el nombre). Cambia los colores por los reales de cada marca.",
+
+  "Taller Antumalal": {
+    "color": "#1F4E79",
+    "logo": "logos/taller_antumalal.png"
+  },
+  "Antumalal Autopartes": {
+    "color": "#C1121F",
+    "logo": "logos/antumalal_autopartes.png"
+  },
+  "Presto Car Service": {
+    "color": "#111827",
+    "logo": "logos/presto_car_service.png"
+  }
+}

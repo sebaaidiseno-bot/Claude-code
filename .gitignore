@@ -2,7 +2,17 @@
 qr_salida/
 qr_taller_*/
 qr_ejemplo/
+qr/
+credenciales/
 *.vcf
+*.pdf
+
+# Fotos de personas y plantillas (binarios / datos personales) — no versionar
+fotos/*
+!fotos/LEEME.txt
+plantillas/*.png
+plantillas/*.jpg
+plantillas/*.pdf
 
 # Respuestas reales (datos de personas) — no versionar
 respuestas*.csv
