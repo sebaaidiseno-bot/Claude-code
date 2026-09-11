@@ -49,20 +49,26 @@ def main() -> None:
         img = Image.new("RGB", (ANCHO, ALTO), color)
         d = ImageDraw.Draw(img)
 
-        # Banda superior más oscura + nombre de la marca
-        d.rectangle((0, 0, ANCHO, int(ALTO * 0.16)),
-                    fill=tuple(int(c * 0.6) for c in color))
-        f_tit = cargar_fuente(int(ALTO * 0.045), True, {})
+        # Círculo blanco (marco de foto) para probar la detección automática.
+        cx, cy = ANCHO // 2, int(ALTO * 0.28)
+        r = int(ANCHO * 0.26)
+        d.ellipse((cx - r - 14, cy - r - 14, cx + r + 14, cy + r + 14),
+                  fill=(245, 170, 60))          # anillo naranjo
+        d.ellipse((cx - r, cy - r, cx + r, cy + r), fill=(255, 255, 255))
+
+        # Nombre de la marca (gris claro, bajo el umbral de blanco 235,
+        # para no interferir con la detección del círculo).
+        f_tit = cargar_fuente(int(ALTO * 0.03), True, {})
         tb = d.textbbox((0, 0), marca, font=f_tit)
-        d.text(((ANCHO - (tb[2] - tb[0])) / 2, int(ALTO * 0.055)), marca,
-               fill="#FFFFFF", font=f_tit)
+        d.text(((ANCHO - (tb[2] - tb[0])) / 2, int(ALTO * 0.045)), marca,
+               fill="#AFC2D6", font=f_tit)
 
         # Aviso de que es plantilla de ejemplo
         f_avi = cargar_fuente(int(ALTO * 0.018), False, {})
         aviso = "PLANTILLA DE EJEMPLO — reemplázala por tu diseño real"
         ab = d.textbbox((0, 0), aviso, font=f_avi)
         d.text(((ANCHO - (ab[2] - ab[0])) / 2, int(ALTO * 0.965)), aviso,
-               fill="#FFFFFF", font=f_avi)
+               fill="#AFC2D6", font=f_avi)
 
         ruta = Path("plantillas") / archivo
         img.save(ruta, dpi=(300, 300))

@@ -49,35 +49,44 @@ from generar_qr import (
     qr_pil,
 )
 
-# Rutas típicas de fuentes en Linux (DejaVu viene casi siempre instalada).
-FUENTES_REGULAR = [
-    "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf",
-    "/usr/share/fonts/truetype/liberation/LiberationSans-Regular.ttf",
-]
-FUENTES_BOLD = [
-    "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf",
-    "/usr/share/fonts/truetype/liberation/LiberationSans-Bold.ttf",
-]
+CARPETA_FUENTES = Path(__file__).parent / "fonts"
+
+# Peso -> lista de rutas candidatas (primero Montserrat local, luego el sistema).
+PESOS = {
+    "regular":  [CARPETA_FUENTES / "Montserrat-Regular.ttf",
+                 "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf"],
+    "medium":   [CARPETA_FUENTES / "Montserrat-Medium.ttf",
+                 CARPETA_FUENTES / "Montserrat-Regular.ttf",
+                 "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf"],
+    "semibold": [CARPETA_FUENTES / "Montserrat-SemiBold.ttf",
+                 CARPETA_FUENTES / "Montserrat-Bold.ttf",
+                 "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf"],
+    "bold":     [CARPETA_FUENTES / "Montserrat-Bold.ttf",
+                 "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf"],
+}
 
 
 # ---------------------------------------------------------------------------
 # Fuentes
 # ---------------------------------------------------------------------------
 
-def _primera_existente(rutas: list[str], override: str | None) -> str | None:
+def _primera_existente(rutas, override: str | None) -> str | None:
     if override and Path(override).exists():
         return override
     for r in rutas:
         if Path(r).exists():
-            return r
+            return str(r)
     return None
 
 
-def cargar_fuente(tam_px: int, bold: bool, cfg_fuentes: dict):
-    ruta = _primera_existente(
-        FUENTES_BOLD if bold else FUENTES_REGULAR,
-        cfg_fuentes.get("bold" if bold else "regular"),
-    )
+def cargar_fuente(tam_px: int, peso, cfg_fuentes: dict):
+    """peso: 'regular'|'medium'|'semibold'|'bold' (o True/False por compat)."""
+    if peso is True:
+        peso = "bold"
+    elif peso is False or peso is None:
+        peso = "regular"
+    ruta = _primera_existente(PESOS.get(peso, PESOS["regular"]),
+                              cfg_fuentes.get(peso))
     if ruta:
         return ImageFont.truetype(ruta, tam_px)
     return ImageFont.load_default()
@@ -91,6 +100,26 @@ def ancho_texto(draw, texto, fuente):
 # ---------------------------------------------------------------------------
 # Composición
 # ---------------------------------------------------------------------------
+
+def detectar_circulo(fondo: Image.Image, region_alto: float = 0.62,
+                     umbral: int = 235) -> dict | None:
+    """Detecta el círculo blanco (marco de foto) en la parte superior de la
+    plantilla y devuelve su caja en fracción {x,y,w,h}. Robusto porque el
+    círculo es la única zona casi blanca de esa región (el fondo es de color)."""
+    W, H = fondo.size
+    gris = fondo.convert("L").crop((0, 0, W, int(H * region_alto)))
+    mask = gris.point(lambda p: 255 if p >= umbral else 0)
+    bbox = mask.getbbox()
+    if not bbox:
+        return None
+    x0, y0, x1, y1 = bbox
+    return {
+        "x": ((x0 + x1) / 2) / W,
+        "y": ((y0 + y1) / 2) / H,
+        "w": (x1 - x0) / W,
+        "h": (y1 - y0) / H,
+    }
+
 
 def pegar_foto(base: Image.Image, foto: Image.Image, box: dict) -> None:
     W, H = base.size
@@ -139,19 +168,26 @@ def dibujar_texto(base: Image.Image, texto: str, cfg: dict, cfg_fuentes: dict) -
         return
     W, H = base.size
     d = ImageDraw.Draw(base)
-    bold = bool(cfg.get("bold"))
+    peso = cfg.get("peso") or ("bold" if cfg.get("bold") else "regular")
     tam = max(8, int(cfg.get("tam", 0.04) * H))
     color = cfg.get("color", "#FFFFFF")
     align = cfg.get("align", "center")
+    mayus = bool(cfg.get("mayusculas"))
+    espaciado = cfg.get("espaciado", 0)  # tracking en px extra por caracter
+    if mayus:
+        texto = texto.upper()
     # Ancho máximo permitido (fracción del ancho de la imagen).
     max_w = cfg.get("max_w", 0.9) * W
 
-    fuente = cargar_fuente(tam, bold, cfg_fuentes)
-    tw, _ = ancho_texto(d, texto, fuente)
-    while tw > max_w and tam > 8:  # auto-reduce si no cabe
+    def _ancho(fuente):
+        w, _ = ancho_texto(d, texto, fuente)
+        return w + espaciado * max(0, len(texto) - 1)
+
+    fuente = cargar_fuente(tam, peso, cfg_fuentes)
+    while _ancho(fuente) > max_w and tam > 8:  # auto-reduce si no cabe
         tam -= 2
-        fuente = cargar_fuente(tam, bold, cfg_fuentes)
-        tw, _ = ancho_texto(d, texto, fuente)
+        fuente = cargar_fuente(tam, peso, cfg_fuentes)
+    tw = _ancho(fuente)
 
     cx, cy = cfg.get("x", 0.5) * W, cfg.get("y", 0.5) * H
     if align == "left":
@@ -161,7 +197,14 @@ def dibujar_texto(base: Image.Image, texto: str, cfg: dict, cfg_fuentes: dict) -
     else:
         x = cx - tw / 2
     _, th = ancho_texto(d, texto, fuente)
-    d.text((x, cy - th / 2), texto, fill=color, font=fuente)
+    y = cy - th / 2
+    if espaciado:
+        for ch in texto:
+            d.text((x, y), ch, fill=color, font=fuente)
+            cw, _ = ancho_texto(d, ch, fuente)
+            x += cw + espaciado
+    else:
+        d.text((x, y), texto, fill=color, font=fuente)
 
 
 def pegar_qr(base: Image.Image, contenido: str, cfg: dict) -> None:
@@ -190,6 +233,13 @@ def componer(persona: dict, plantilla: dict, cfg_fuentes: dict,
 
     # Foto
     box_foto = plantilla.get("foto")
+    if box_foto and box_foto.get("auto_circulo"):
+        detectada = detectar_circulo(fondo)
+        if detectada:
+            encoge = box_foto.get("encoge", 0.88)
+            lado = min(detectada["w"], detectada["h"]) * encoge
+            box_foto = {**box_foto, "x": detectada["x"], "y": detectada["y"],
+                        "w": lado, "h": lado, "forma": "circulo"}
     if box_foto:
         slug = nombre_archivo(persona["nombre"], "foto")
         ruta_foto = None

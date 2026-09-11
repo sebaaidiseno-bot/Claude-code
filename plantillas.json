@@ -1,44 +1,35 @@
 {
-  "_ayuda": "Una entrada por MARCA (igual que en empresas.json). 'fondo' es tu plantilla exportada (PNG a tamaño final) en la carpeta plantillas/. Las coordenadas van en FRACCIÓN de 0 a 1: x,y es el CENTRO del elemento; para textos 'tam' es fracción del ALTO de la imagen; para 'qr' y foto 'tam/w/h' son fracción del ANCHO/ALTO. Ajusta estos valores hasta que calcen con tu diseño. Puedes borrar campos que no uses.",
+  "_ayuda": "Una entrada por MARCA (igual que en empresas.json). 'fondo' es tu plantilla LIMPIA exportada (PNG a tamaño final) en plantillas/. Coordenadas en FRACCIÓN 0..1: x,y = CENTRO del elemento; en textos 'tam' es fracción del ALTO; en 'qr' 'tam' es fracción del ANCHO. La foto usa 'auto_circulo': detecta el círculo blanco del marco y calza sola. Tipografía Montserrat (Bold nombre, SemiBold cargo). Los datos de contacto (teléfono, correo, web, dirección) NO van como texto: van dentro del QR.",
 
-  "_fuentes": {
-    "regular": "",
-    "bold": ""
-  },
+  "_fuentes": { "regular": "", "medium": "", "semibold": "", "bold": "" },
 
   "Taller Antumalal": {
     "fondo": "plantillas/taller_antumalal.png",
-    "foto": { "x": 0.5, "y": 0.32, "w": 0.44, "h": 0.44, "forma": "circulo" },
+    "foto": { "auto_circulo": true, "encoge": 0.86 },
     "textos": {
-      "nombre":   { "x": 0.5, "y": 0.60, "tam": 0.052, "color": "#FFFFFF", "align": "center", "bold": true, "max_w": 0.9 },
-      "cargo":    { "x": 0.5, "y": 0.66, "tam": 0.032, "color": "#E6E6E6", "align": "center" },
-      "telefono": { "x": 0.5, "y": 0.71, "tam": 0.028, "color": "#FFFFFF", "align": "center" },
-      "correo":   { "x": 0.5, "y": 0.745, "tam": 0.024, "color": "#E6E6E6", "align": "center" }
+      "nombre": { "x": 0.5, "y": 0.556, "tam": 0.050, "peso": "bold", "color": "#FFFFFF", "align": "center", "max_w": 0.82 },
+      "cargo":  { "x": 0.5, "y": 0.600, "tam": 0.030, "peso": "semibold", "color": "#43AEC9", "align": "center", "mayusculas": true, "espaciado": 4 }
     },
-    "qr": { "x": 0.5, "y": 0.88, "tam": 0.26, "fondo_blanco": true }
+    "qr": { "x": 0.5, "y": 0.688, "tam": 0.235, "fondo_blanco": true }
   },
 
   "Antumalal Autopartes": {
     "fondo": "plantillas/antumalal_autopartes.png",
-    "foto": { "x": 0.5, "y": 0.32, "w": 0.44, "h": 0.44, "forma": "circulo" },
+    "foto": { "auto_circulo": true, "encoge": 0.86 },
     "textos": {
-      "nombre":   { "x": 0.5, "y": 0.60, "tam": 0.052, "color": "#FFFFFF", "align": "center", "bold": true, "max_w": 0.9 },
-      "cargo":    { "x": 0.5, "y": 0.66, "tam": 0.032, "color": "#F0D0D0", "align": "center" },
-      "telefono": { "x": 0.5, "y": 0.71, "tam": 0.028, "color": "#FFFFFF", "align": "center" },
-      "correo":   { "x": 0.5, "y": 0.745, "tam": 0.024, "color": "#F0D0D0", "align": "center" }
+      "nombre": { "x": 0.5, "y": 0.556, "tam": 0.050, "peso": "bold", "color": "#FFFFFF", "align": "center", "max_w": 0.82 },
+      "cargo":  { "x": 0.5, "y": 0.600, "tam": 0.030, "peso": "semibold", "color": "#43AEC9", "align": "center", "mayusculas": true, "espaciado": 4 }
     },
-    "qr": { "x": 0.5, "y": 0.88, "tam": 0.26, "fondo_blanco": true }
+    "qr": { "x": 0.5, "y": 0.688, "tam": 0.235, "fondo_blanco": true }
   },
 
   "Presto Car Service": {
     "fondo": "plantillas/presto_car_service.png",
-    "foto": { "x": 0.5, "y": 0.32, "w": 0.44, "h": 0.44, "forma": "circulo" },
+    "foto": { "auto_circulo": true, "encoge": 0.90 },
     "textos": {
-      "nombre":   { "x": 0.5, "y": 0.60, "tam": 0.052, "color": "#FFFFFF", "align": "center", "bold": true, "max_w": 0.9 },
-      "cargo":    { "x": 0.5, "y": 0.66, "tam": 0.032, "color": "#CFCFCF", "align": "center" },
-      "telefono": { "x": 0.5, "y": 0.71, "tam": 0.028, "color": "#FFFFFF", "align": "center" },
-      "correo":   { "x": 0.5, "y": 0.745, "tam": 0.024, "color": "#CFCFCF", "align": "center" }
+      "nombre": { "x": 0.5, "y": 0.565, "tam": 0.050, "peso": "bold", "color": "#FFFFFF", "align": "center", "max_w": 0.82 },
+      "cargo":  { "x": 0.5, "y": 0.610, "tam": 0.030, "peso": "semibold", "color": "#FFFFFF", "align": "center", "mayusculas": true, "espaciado": 4 }
     },
-    "qr": { "x": 0.5, "y": 0.88, "tam": 0.26, "fondo_blanco": true }
+    "qr": { "x": 0.5, "y": 0.723, "tam": 0.235, "fondo_blanco": true }
   }
 }
