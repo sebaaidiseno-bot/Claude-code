@@ -10,7 +10,7 @@
       "nombre": { "x": 0.5, "y": 0.556, "tam": 0.050, "peso": "bold", "color": "#FFFFFF", "align": "center", "max_w": 0.82 },
       "cargo":  { "x": 0.5, "y": 0.600, "tam": 0.030, "peso": "semibold", "color": "#43AEC9", "align": "center", "mayusculas": true, "espaciado": 4 }
     },
-    "qr": { "x": 0.5, "y": 0.688, "tam": 0.235, "fondo_blanco": true }
+    "qr": { "x": 0.5, "y": 0.688, "tam": 0.235, "invertido": true, "color": "#FFFFFF" }
   },
 
   "Antumalal Autopartes": {
@@ -20,7 +20,7 @@
       "nombre": { "x": 0.5, "y": 0.556, "tam": 0.050, "peso": "bold", "color": "#FFFFFF", "align": "center", "max_w": 0.82 },
       "cargo":  { "x": 0.5, "y": 0.600, "tam": 0.030, "peso": "semibold", "color": "#43AEC9", "align": "center", "mayusculas": true, "espaciado": 4 }
     },
-    "qr": { "x": 0.5, "y": 0.688, "tam": 0.235, "fondo_blanco": true }
+    "qr": { "x": 0.5, "y": 0.688, "tam": 0.235, "invertido": true, "color": "#FFFFFF" }
   },
 
   "Presto Car Service": {
@@ -30,6 +30,6 @@
       "nombre": { "x": 0.5, "y": 0.565, "tam": 0.050, "peso": "bold", "color": "#FFFFFF", "align": "center", "max_w": 0.82 },
       "cargo":  { "x": 0.5, "y": 0.610, "tam": 0.030, "peso": "semibold", "color": "#FFFFFF", "align": "center", "mayusculas": true, "espaciado": 4 }
     },
-    "qr": { "x": 0.5, "y": 0.723, "tam": 0.235, "fondo_blanco": true }
+    "qr": { "x": 0.5, "y": 0.723, "tam": 0.235, "invertido": true, "color": "#FFFFFF" }
   }
 }

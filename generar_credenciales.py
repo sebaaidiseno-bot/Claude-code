@@ -35,7 +35,7 @@ import sys
 from pathlib import Path
 
 try:
-    from PIL import Image, ImageDraw, ImageFont, ImageOps
+    from PIL import Image, ImageColor, ImageDraw, ImageFont, ImageOps
 except ImportError:
     sys.exit("Falta Pillow. Instala con: pip install -r requirements.txt")
 
@@ -210,13 +210,30 @@ def dibujar_texto(base: Image.Image, texto: str, cfg: dict, cfg_fuentes: dict) -
 def pegar_qr(base: Image.Image, contenido: str, cfg: dict) -> None:
     W, _ = base.size
     lado = int(cfg.get("tam", 0.25) * W)
-    qr = qr_pil(contenido, box_size=10, border=1).convert("RGBA")
-    qr = qr.resize((lado, lado), Image.NEAREST)
-    if cfg.get("fondo_blanco", True):
-        pad = int(lado * 0.06)
-        placa = Image.new("RGBA", (lado + 2 * pad, lado + 2 * pad), (255, 255, 255, 255))
-        placa.paste(qr, (pad, pad))
-        qr = placa
+    invertido = bool(cfg.get("invertido"))
+    # Invertido usa corrección alta (H) porque los QR de módulos claros sobre
+    # fondo oscuro cuestan más de leer; así toleran mejor la impresión.
+    ec = cfg.get("ec", "H" if invertido else "M")
+    gris = qr_pil(contenido, box_size=10, border=1, ec=ec).convert("L")
+    gris = gris.resize((lado, lado), Image.NEAREST)
+    modulos = gris.point(lambda p: 255 if p < 128 else 0)  # máscara de módulos
+
+    if invertido:
+        # Módulos del color elegido (blanco por defecto); huecos transparentes.
+        color = ImageColor.getrgb(cfg.get("color", "#FFFFFF"))
+        qr = Image.new("RGBA", (lado, lado), (0, 0, 0, 0))
+        qr.paste(Image.new("RGBA", (lado, lado), color + (255,)), (0, 0), modulos)
+    else:
+        color = ImageColor.getrgb(cfg.get("color", "#000000"))
+        qr = Image.new("RGBA", (lado, lado), (0, 0, 0, 0))
+        qr.paste(Image.new("RGBA", (lado, lado), color + (255,)), (0, 0), modulos)
+        if cfg.get("fondo_blanco", True):
+            pad = int(lado * 0.06)
+            placa = Image.new("RGBA", (lado + 2 * pad, lado + 2 * pad),
+                              (255, 255, 255, 255))
+            placa.paste(qr, (pad, pad), qr)
+            qr = placa
+
     qw, qh = qr.size
     cx, cy = int(cfg.get("x", 0.5) * W), int(cfg.get("y", 0.85) * base.size[1])
     base.paste(qr, (cx - qw // 2, cy - qh // 2), qr)

@@ -225,10 +225,19 @@ def nombre_archivo(texto: str, respaldo: str) -> str:
 # Generación de QR
 # ---------------------------------------------------------------------------
 
-def qr_pil(contenido: str, box_size: int = 10, border: int = 4):
-    """Devuelve el QR como imagen PIL (para guardar o componer en credenciales)."""
+_EC = {
+    "L": qrcode.constants.ERROR_CORRECT_L,
+    "M": qrcode.constants.ERROR_CORRECT_M,
+    "Q": qrcode.constants.ERROR_CORRECT_Q,
+    "H": qrcode.constants.ERROR_CORRECT_H,
+}
+
+
+def qr_pil(contenido: str, box_size: int = 10, border: int = 4, ec: str = "M"):
+    """Devuelve el QR como imagen PIL (para guardar o componer en credenciales).
+    ec: nivel de corrección de errores 'L' < 'M' < 'Q' < 'H' (más tolerante)."""
     qr = qrcode.QRCode(
-        error_correction=qrcode.constants.ERROR_CORRECT_M,
+        error_correction=_EC.get(ec, qrcode.constants.ERROR_CORRECT_M),
         box_size=box_size,
         border=border,
     )
